@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHI-Nomos — Cloud Migration PHI Gap | Modular Norm Model</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root{
+  --paper:#f8f6f1;
+  --panel:#ffffff;
+  --hairline:#ddd7c8;
+  --ink:#1c2129;
+  --ink-soft:#565b52;
+  --slate:#2c4a6e;
+  --slate-soft:#e8eef4;
+  --amber:#c2751b;
+  --amber-soft:#fdeed9;
+  --green:#1f8a5f;
+  --green-soft:#e3f3ea;
+  --red:#b3413a;
+  --red-soft:#fbe9e7;
+  --grey-soft:#eef0ee;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --serif: 'Source Serif 4', Georgia, 'Iowan Old Style', serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--slate-soft);}
+a{color:var(--slate);}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 80px;}
+header.masthead{border-bottom:1px solid var(--hairline); padding:38px 0 28px; margin-bottom:36px;}
+.eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin:0 0 10px;}
+.crumb{font-family:var(--mono); font-size:12px; color:var(--ink-soft); margin:0 0 14px;}
+.crumb a{color:var(--ink-soft);}
+h1{font-family:var(--serif); font-weight:700; font-size:clamp(28px,3.4vw,42px); margin:0 0 10px; letter-spacing:-0.01em;}
+.subtitle{font-family:var(--serif); font-style:italic; color:var(--ink-soft); font-size:18px; margin:0 0 4px; max-width:820px;}
+.source-line{font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); margin-top:14px;}
+.source-line a{color:var(--ink-soft); text-decoration:underline dotted;}
+section{margin-bottom:44px;}
+.section-label{font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); display:flex; align-items:center; gap:12px; margin-bottom:16px;}
+.section-label::after{content:''; flex:1; height:1px; background:var(--hairline);}
+.card{background:var(--panel); border:1px solid var(--hairline); border-radius:3px; padding:26px 30px;}
+.statute{font-family:var(--serif); font-size:16px;}
+.statute p{margin:0 0 14px;}
+.statute .cite{font-family:var(--mono); font-size:12.5px; color:var(--slate); display:inline-block; margin-bottom:6px;}
+.scenario-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:22px;}
+@media (max-width:860px){ .scenario-grid{grid-template-columns:1fr;} }
+.scenario-grid h3{font-family:var(--sans); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px;}
+.scenario-grid .card p{font-family:var(--serif); font-size:15.5px; margin:0 0 10px;}
+.answers{list-style:none; margin:0; padding:0; font-family:var(--sans); font-size:14.5px;}
+.answers li{padding:9px 0; border-top:1px solid var(--hairline); display:flex; gap:10px;}
+.answers li:first-child{border-top:none;}
+.answers li b{color:var(--slate); font-family:var(--mono); font-size:13px;}
+.howto ol{font-family:var(--sans); font-size:14.5px; padding-left:20px; margin:0;}
+.howto li{margin-bottom:10px;}
+.howto code{font-family:var(--mono); background:var(--grey-soft); padding:1px 6px; border-radius:3px; font-size:13px;}
+.legend{display:flex; flex-wrap:wrap; gap:10px 22px; font-family:var(--sans); font-size:13.5px; margin-top:18px; padding-top:18px; border-top:1px solid var(--hairline);}
+.legend .item{display:flex; align-items:center; gap:8px;}
+.swatch{width:13px;height:13px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,.15);}
+.toolbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px;}
+.toolbar .hint{font-family:var(--sans); font-size:13.5px; color:var(--ink-soft);}
+.btn{font-family:var(--sans); font-weight:600; font-size:14px; border:none; border-radius:4px; padding:11px 22px; cursor:pointer; transition:filter .15s ease, transform .1s ease;}
+.btn:active{transform:translateY(1px);}
+.btn-solve{background:var(--slate); color:#fff;}
+.btn-solve:hover{filter:brightness(1.12);}
+.btn-reset{background:transparent; color:var(--ink-soft); border:1px solid var(--hairline); margin-left:10px;}
+.btn-reset:hover{border-color:var(--ink-soft); color:var(--ink);}
+.diagram-card{overflow-x:auto; padding:30px 24px 18px;}
+#mainsvg{display:block; margin:0 auto; max-width:100%; height:auto;}
+#mainsvg .node{cursor:default;}
+#mainsvg .node.clickable{cursor:pointer;}
+#mainsvg .node.clickable:hover polygon,
+#mainsvg .node.clickable:hover path{filter:brightness(0.94);}
+#mainsvg text{user-select:none;}
+.tooltip{position:fixed; z-index:999; max-width:320px; background:var(--ink); color:#fdfaf3; font-family:var(--serif); font-size:13.5px; line-height:1.4; padding:10px 13px; border-radius:5px; pointer-events:none; opacity:0; transition:opacity .1s ease; box-shadow:0 6px 18px rgba(0,0,0,.25);}
+.tooltip.show{opacity:1;}
+.tooltip .tt-id{display:block; font-family:var(--mono); font-size:10.5px; color:#d9c9a4; letter-spacing:.06em; margin-bottom:4px; text-transform:uppercase;}
+#register .card{padding:0; overflow:hidden;}
+.register-empty{padding:34px 30px; font-family:var(--serif); font-style:italic; color:var(--ink-soft); text-align:center;}
+table.gaps{width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px;}
+table.gaps th{text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); background:var(--grey-soft); padding:10px 16px; border-bottom:1px solid var(--hairline);}
+table.gaps td{padding:14px 16px; border-bottom:1px solid var(--hairline); vertical-align:top;}
+table.gaps tr:last-child td{border-bottom:none;}
+.pill{display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.04em; padding:3px 9px; border-radius:20px;}
+.pill-vio{background:var(--red-soft); color:var(--red);}
+.pill-com{background:var(--green-soft); color:var(--green);}
+.pill-inc{background:var(--grey-soft); color:var(--ink-soft);}
+.norm-cite{font-family:var(--mono); font-size:12.5px; color:var(--slate);}
+footer{margin-top:60px; padding-top:24px; border-top:1px solid var(--hairline); font-family:var(--mono); font-size:12px; color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <p class="crumb"><a href="index.html">PHI-Nomos Case Studies</a> / Cloud Migration PHI Gap</p>
+  <p class="eyebrow">PHI-Nomos &middot; Modular Norm Model Demo</p>
+  <h1>Cloud Migration PHI Gap</h1>
+  <p class="subtitle">An interactive Nomos modular norm model for a HIPAA PHI gap&#8209;analysis case study, built in the visual and reasoning style of the original Modular Norms toolchain.</p>
+  <p class="source-line">Model template: Mandal, Gandhi &amp; Siy, <a href="https://github.com/robinagandhi/modularnorms" target="_blank" rel="noopener">robinagandhi/modularnorms</a> &middot; Applied here to 45 CFR &sect;164.308(a)(1)(ii)(A), &sect;164.312(a)(2)(iv), &sect;164.410</p>
+</header>
+
+<section>
+  <p class="section-label">Regulatory Text</p>
+  <div class="card statute"><span class="cite">45 CFR &sect;164.308(a)(1)(ii)(A) &mdash; Risk Analysis</span><p>A covered entity must conduct an accurate and thorough assessment of the potential risks and vulnerabilities to the confidentiality, integrity, and availability of electronic protected health information it holds.</p><span class="cite">45 CFR &sect;164.312(a)(2)(iv) &mdash; Encryption and Decryption</span><p>A covered entity must implement a mechanism to encrypt and decrypt electronic protected health information where reasonable and appropriate, consistent with the entity&rsquo;s risk analysis.</p><span class="cite">45 CFR &sect;164.410 / &sect;164.404 &mdash; Breach Notification</span><p>Following discovery of a breach of unsecured protected health information, a covered entity must notify each affected individual, and HHS, without unreasonable delay and in no case later than 60 days after discovery.</p></div>
+</section>
+
+<section>
+  <p class="section-label">Compliance Scenario</p>
+  <div class="scenario-grid">
+<div class="card">
+  <h3>Scenario</h3>
+  <p>Lakeside Behavioral Health migrates its EHR platform from an on-premises server to a commercial cloud provider over a single weekend to meet a vendor-imposed end-of-support deadline. The migration team, under time pressure, does not commission a risk analysis of the new cloud environment beforehand. During the 96-hour cutover window, patient records &mdash; including psychotherapy notes &mdash; are staged in a cloud storage bucket that is later found to have been configured without encryption at rest. The bucket is corrected once discovered, three weeks after go-live, during a routine vendor security review.</p>
+  <h3>Compliance Question</h3>
+  <p>Was Lakeside compliant with &sect;164.308(a)(1)(ii)(A) and &sect;164.312(a)(2)(iv) during the migration window &mdash; and does the encryption gap trigger a Breach Notification obligation under &sect;164.410?</p>
+</div>
+<div class="card">
+  <h3>Answer Choices</h3>
+  <ul class="answers">
+    <li><b>1</b> Yes &mdash; the prior on-premises risk analysis still covers the data once migrated.</li>
+    <li><b>2</b> No &mdash; skipping a risk analysis for the new environment is itself a gap at &sect;164.308(a)(1)(ii)(A), and the resulting unencrypted storage window is a presumptive breach under &sect;164.410.</li>
+    <li><b>3</b> Need more information about whether any unauthorized party actually accessed the bucket.</li>
+  </ul>
+</div>
+</div>
+</section>
+
+<section>
+  <p class="section-label">Modular Norm Model</p>
+  <div class="card howto">
+    <ol>
+      <li>Hover over any <b>triangle</b> (duty) or <b>box</b> (situation) to read its underlying legal text.</li>
+      <li>Click a white situation box to set it <code>TRUE</code> (green) based on the scenario; click again for <code>FALSE</code> (red); click a third time to clear it.</li>
+      <li>The amber box in the &sect;164.312(a)(2)(iv) cluster is a <b>cross&#8209;reference</b> &mdash; it inherits its value from whether the &sect;164.308(a)(1)(ii)(A) risk analysis duty resolves as violated. The Breach Notification duty in turn cross&#8209;references the encryption duty.</li>
+      <li>Press <b>Solve</b> to propagate satisfiability up through each super&#8209;situation. Duties recolor green (Compliant) or red (Violated); the surrounding cluster recolors to match.</li>
+      <li>The Gap Register below updates automatically with every violated duty found.</li>
+    </ol>
+    <div class="legend">
+      <span class="item"><span class="swatch" style="background:#e3f3ea;border-color:#1f8a5f"></span>ST &mdash; situation satisfied / Com &ndash; duty compliant</span>
+      <span class="item"><span class="swatch" style="background:#fbe9e7;border-color:#b3413a"></span>SF &mdash; situation not satisfied / Vio &ndash; duty violated</span>
+      <span class="item"><span class="swatch" style="background:#ffffff;border-color:#334155"></span>SU &mdash; satisfiability undefined</span>
+      <span class="item"><span class="swatch" style="background:#fdeed9;border-color:#c2751b"></span>Cross&#8209;reference to another super&#8209;situation</span>
+      <span class="item"><span class="swatch" style="background:#eef0ee;border-color:#9aa3ab"></span>Inc &mdash; norm inconclusive (not yet activated)</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="toolbar">
+    <div>
+      <button class="btn btn-solve" id="solveBtn">Solve</button>
+      <button class="btn btn-reset" id="resetBtn">Reset all situations</button>
+    </div>
+    <div class="hint">Click situation boxes below, then press Solve to see compliance propagate.</div>
+  </div>
+  <div class="card diagram-card">
+<svg id="mainsvg" width="1105pt" height="240pt"
+ viewBox="0.00 0.00 1105.00 240.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 236)">
+<title>G</title>
+<g id="clust1" class="cluster">
+<title>clusterSS_HIPAA308a1iiA</title>
+<path fill="transparent" stroke="#94a3b8" d="M20,-8C20,-8 358,-8 358,-8 364,-8 370,-14 370,-20 370,-20 370,-212 370,-212 370,-218 364,-224 358,-224 358,-224 20,-224 20,-224 14,-224 8,-218 8,-212 8,-212 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+<text text-anchor="middle" x="189" y="-15.4" font-family="Helvetica,sans-Serif" font-size="12.00">SS_HIPAA308a1iiA</text>
+</g>
+<g id="clust2" class="cluster">
+<title>clusterSS_HIPAA312a2iv</title>
+<path fill="transparent" stroke="#94a3b8" d="M401,-24.5C401,-24.5 723,-24.5 723,-24.5 729,-24.5 735,-30.5 735,-36.5 735,-36.5 735,-212 735,-212 735,-218 729,-224 723,-224 723,-224 401,-224 401,-224 395,-224 389,-218 389,-212 389,-212 389,-36.5 389,-36.5 389,-30.5 395,-24.5 401,-24.5"/>
+<text text-anchor="middle" x="562" y="-31.9" font-family="Helvetica,sans-Serif" font-size="12.00">SS_HIPAA312a2iv</text>
+</g>
+<g id="clust3" class="cluster">
+<title>clusterSS_HIPAA410b</title>
+<path fill="transparent" stroke="#94a3b8" d="M767,-19C767,-19 1077,-19 1077,-19 1083,-19 1089,-25 1089,-31 1089,-31 1089,-212 1089,-212 1089,-218 1083,-224 1077,-224 1077,-224 767,-224 767,-224 761,-224 755,-218 755,-212 755,-212 755,-31 755,-31 755,-25 761,-19 767,-19"/>
+<text text-anchor="middle" x="922" y="-26.4" font-family="Helvetica,sans-Serif" font-size="12.00">SS_HIPAA410b</text>
+</g>
+<!-- HIPAA308a1iiA -->
+<g id="HIPAA308a1iiA" class="node">
+<title>HIPAA308a1iiA</title>
+<polygon fill="#ffffff" stroke="black" points="235,-216 107.53,-186 362.47,-186 235,-216"/>
+<text text-anchor="middle" x="235" y="-193.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">HIPAA308a1iiA</text>
+</g>
+<!-- HIPAA308a1iiA_1 -->
+<g id="HIPAA308a1iiA_1" class="node">
+<title>HIPAA308a1iiA_1</title>
+<path fill="#ffffff" stroke="#334155" d="M349.5,-111C349.5,-111 212.5,-111 212.5,-111 206.5,-111 200.5,-105 200.5,-99 200.5,-99 200.5,-60 200.5,-60 200.5,-54 206.5,-48 212.5,-48 212.5,-48 349.5,-48 349.5,-48 355.5,-48 361.5,-54 361.5,-60 361.5,-60 361.5,-99 361.5,-99 361.5,-105 355.5,-111 349.5,-111"/>
+<text text-anchor="middle" x="281" y="-99" font-family="Helvetica,sans-Serif" font-size="10.00">covered entity conducted and</text>
+<text text-anchor="middle" x="281" y="-88" font-family="Helvetica,sans-Serif" font-size="10.00">documented a risk analysis</text>
+<text text-anchor="middle" x="281" y="-77" font-family="Helvetica,sans-Serif" font-size="10.00">covering the new cloud</text>
+<text text-anchor="middle" x="281" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">environment before ePHI was</text>
+<text text-anchor="middle" x="281" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">migrated into it</text>
+</g>
+<!-- HIPAA308a1iiA_1&#45;&gt;HIPAA308a1iiA -->
+<g id="edge1" class="edge">
+<title>HIPAA308a1iiA_1&#45;&gt;HIPAA308a1iiA</title>
+<path fill="none" stroke="#94a3b8" d="M268.67,-111.18C260.34,-131.92 249.61,-158.63 242.53,-176.26"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="239.13,-175.34 238.64,-185.93 245.62,-177.95 239.13,-175.34"/>
+<text text-anchor="middle" x="274.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">satisfies</text>
+</g>
+<!-- HIPAA308a1iiA_2 -->
+<g id="HIPAA308a1iiA_2" class="node">
+<title>HIPAA308a1iiA_2</title>
+<path fill="#ffffff" stroke="#334155" d="M152.5,-122C152.5,-122 27.5,-122 27.5,-122 21.5,-122 15.5,-116 15.5,-110 15.5,-110 15.5,-49 15.5,-49 15.5,-43 21.5,-37 27.5,-37 27.5,-37 152.5,-37 152.5,-37 158.5,-37 164.5,-43 164.5,-49 164.5,-49 164.5,-110 164.5,-110 164.5,-116 158.5,-122 152.5,-122"/>
+<text text-anchor="middle" x="90" y="-110" font-family="Helvetica,sans-Serif" font-size="10.00">covered entity changes the</text>
+<text text-anchor="middle" x="90" y="-99" font-family="Helvetica,sans-Serif" font-size="10.00">IT infrastructure or</text>
+<text text-anchor="middle" x="90" y="-88" font-family="Helvetica,sans-Serif" font-size="10.00">environment that creates,</text>
+<text text-anchor="middle" x="90" y="-77" font-family="Helvetica,sans-Serif" font-size="10.00">receives, maintains, or</text>
+<text text-anchor="middle" x="90" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">transmits ePHI (e.g.</text>
+<text text-anchor="middle" x="90" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">migrates to a new cloud</text>
+<text text-anchor="middle" x="90" y="-44" font-family="Helvetica,sans-Serif" font-size="10.00">environment)</text>
+</g>
+<!-- HIPAA308a1iiA_2&#45;&gt;HIPAA308a1iiA -->
+<g id="edge2" class="edge">
+<title>HIPAA308a1iiA_2&#45;&gt;HIPAA308a1iiA</title>
+<path fill="none" stroke="#94a3b8" d="M142.76,-122.16C168.06,-142.14 196.84,-164.87 215.43,-179.54"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="213.42,-182.42 223.44,-185.87 217.76,-176.92 213.42,-182.42"/>
+<text text-anchor="middle" x="200.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">activates</text>
+</g>
+<!-- HIPAA312a2iv -->
+<g id="HIPAA312a2iv" class="node">
+<title>HIPAA312a2iv</title>
+<polygon fill="#ffffff" stroke="black" points="606,-216 484.56,-186 727.44,-186 606,-216"/>
+<text text-anchor="middle" x="606" y="-193.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">HIPAA312a2iv</text>
+</g>
+<!-- HIPAA312a2iv_3 -->
+<g id="HIPAA312a2iv_3" class="node">
+<title>HIPAA312a2iv_3</title>
+<path fill="#ffffff" stroke="#334155" d="M715,-105.5C715,-105.5 573,-105.5 573,-105.5 567,-105.5 561,-99.5 561,-93.5 561,-93.5 561,-65.5 561,-65.5 561,-59.5 567,-53.5 573,-53.5 573,-53.5 715,-53.5 715,-53.5 721,-53.5 727,-59.5 727,-65.5 727,-65.5 727,-93.5 727,-93.5 727,-99.5 721,-105.5 715,-105.5"/>
+<text text-anchor="middle" x="644" y="-93.5" font-family="Helvetica,sans-Serif" font-size="10.00">ePHI stored in the new cloud</text>
+<text text-anchor="middle" x="644" y="-82.5" font-family="Helvetica,sans-Serif" font-size="10.00">environment was encrypted at</text>
+<text text-anchor="middle" x="644" y="-71.5" font-family="Helvetica,sans-Serif" font-size="10.00">rest for the full duration</text>
+<text text-anchor="middle" x="644" y="-60.5" font-family="Helvetica,sans-Serif" font-size="10.00">of the migration window</text>
+</g>
+<!-- HIPAA312a2iv_3&#45;&gt;HIPAA312a2iv -->
+<g id="edge3" class="edge">
+<title>HIPAA312a2iv_3&#45;&gt;HIPAA312a2iv</title>
+<path fill="none" stroke="#94a3b8" d="M635.66,-105.63C628.61,-126.86 618.68,-156.8 612.29,-176.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="608.89,-175.18 609.06,-185.78 615.53,-177.39 608.89,-175.18"/>
+<text text-anchor="middle" x="640.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">satisfies</text>
+</g>
+<!-- HIPAA312a2iv_4 -->
+<g id="HIPAA312a2iv_4" class="node">
+<title>HIPAA312a2iv_4</title>
+<path fill="#fde8cf" stroke="#c2751b" d="M512.5,-97.5C512.5,-97.5 409.5,-97.5 409.5,-97.5 403.5,-97.5 397.5,-91.5 397.5,-85.5 397.5,-85.5 397.5,-73.5 397.5,-73.5 397.5,-67.5 403.5,-61.5 409.5,-61.5 409.5,-61.5 512.5,-61.5 512.5,-61.5 518.5,-61.5 524.5,-67.5 524.5,-73.5 524.5,-73.5 524.5,-85.5 524.5,-85.5 524.5,-91.5 518.5,-97.5 512.5,-97.5"/>
+<text text-anchor="middle" x="461" y="-77" font-family="Helvetica,sans-Serif" font-size="10.00">See SS_HIPAA308a1iiA</text>
+</g>
+<!-- HIPAA312a2iv_4&#45;&gt;HIPAA308a1iiA -->
+<g id="edge7" class="edge">
+<title>HIPAA312a2iv_4&#45;&gt;HIPAA308a1iiA</title>
+<path fill="none" stroke="#94a3b8" stroke-dasharray="5,2" d="M427.17,-97.64C413.63,-104.5 397.04,-112.9 379.34,-121.87"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="377.34,-118.96 370,-126.61 380.5,-125.21 377.34,-118.96"/>
+</g>
+<!-- HIPAA312a2iv_4&#45;&gt;HIPAA312a2iv -->
+<g id="edge4" class="edge">
+<title>HIPAA312a2iv_4&#45;&gt;HIPAA312a2iv</title>
+<path fill="none" stroke="#94a3b8" d="M482.71,-97.64C510.8,-119.82 559.32,-158.14 586.36,-179.49"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="584.32,-182.34 594.33,-185.79 588.65,-176.84 584.32,-182.34"/>
+<text text-anchor="middle" x="570.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">activates</text>
+</g>
+<!-- HIPAA410b -->
+<g id="HIPAA410b" class="node">
+<title>HIPAA410b</title>
+<polygon fill="#ffffff" stroke="black" points="885,-216 785.36,-186 984.64,-186 885,-216"/>
+<text text-anchor="middle" x="885" y="-193.2" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="11.00">HIPAA410b</text>
+</g>
+<!-- HIPAA410b_5 -->
+<g id="HIPAA410b_5" class="node">
+<title>HIPAA410b_5</title>
+<path fill="#ffffff" stroke="#334155" d="M1069,-111C1069,-111 935,-111 935,-111 929,-111 923,-105 923,-99 923,-99 923,-60 923,-60 923,-54 929,-48 935,-48 935,-48 1069,-48 1069,-48 1075,-48 1081,-54 1081,-60 1081,-60 1081,-99 1081,-99 1081,-105 1075,-111 1069,-111"/>
+<text text-anchor="middle" x="1002" y="-99" font-family="Helvetica,sans-Serif" font-size="10.00">covered entity notified</text>
+<text text-anchor="middle" x="1002" y="-88" font-family="Helvetica,sans-Serif" font-size="10.00">affected individuals and HHS</text>
+<text text-anchor="middle" x="1002" y="-77" font-family="Helvetica,sans-Serif" font-size="10.00">within 60 days of</text>
+<text text-anchor="middle" x="1002" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">discovering the unencrypted</text>
+<text text-anchor="middle" x="1002" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">PHI exposure</text>
+</g>
+<!-- HIPAA410b_5&#45;&gt;HIPAA410b -->
+<g id="edge5" class="edge">
+<title>HIPAA410b_5&#45;&gt;HIPAA410b</title>
+<path fill="none" stroke="#94a3b8" d="M970.65,-111.18C948.46,-132.9 919.58,-161.16 901.66,-178.69"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="898.97,-176.43 894.27,-185.93 903.87,-181.43 898.97,-176.43"/>
+<text text-anchor="middle" x="954.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">satisfies</text>
+</g>
+<!-- HIPAA410b_6 -->
+<g id="HIPAA410b_6" class="node">
+<title>HIPAA410b_6</title>
+<path fill="#fde8cf" stroke="#c2751b" d="M874.5,-97.5C874.5,-97.5 775.5,-97.5 775.5,-97.5 769.5,-97.5 763.5,-91.5 763.5,-85.5 763.5,-85.5 763.5,-73.5 763.5,-73.5 763.5,-67.5 769.5,-61.5 775.5,-61.5 775.5,-61.5 874.5,-61.5 874.5,-61.5 880.5,-61.5 886.5,-67.5 886.5,-73.5 886.5,-73.5 886.5,-85.5 886.5,-85.5 886.5,-91.5 880.5,-97.5 874.5,-97.5"/>
+<text text-anchor="middle" x="825" y="-77" font-family="Helvetica,sans-Serif" font-size="10.00">See SS_HIPAA312a2iv</text>
+</g>
+<!-- HIPAA410b_6&#45;&gt;HIPAA312a2iv -->
+<g id="edge8" class="edge">
+<title>HIPAA410b_6&#45;&gt;HIPAA312a2iv</title>
+<path fill="none" stroke="#94a3b8" stroke-dasharray="5,2" d="M792.21,-97.64C778.58,-104.77 761.77,-113.56 743.87,-122.92"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="742.24,-119.82 735,-127.56 745.48,-126.02 742.24,-119.82"/>
+</g>
+<!-- HIPAA410b_6&#45;&gt;HIPAA410b -->
+<g id="edge6" class="edge">
+<title>HIPAA410b_6&#45;&gt;HIPAA410b</title>
+<path fill="none" stroke="#94a3b8" d="M834.11,-97.89C845.26,-119.17 864.06,-155.03 875.42,-176.71"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" points="872.45,-178.6 880.2,-185.83 878.65,-175.35 872.45,-178.6"/>
+<text text-anchor="middle" x="882.5" y="-146.8" font-family="Helvetica,sans-Serif" font-size="9.00" fill="#64748b">activates</text>
+</g>
+</g>
+</svg>
+
+  </div>
+</section>
+
+<section id="register">
+  <p class="section-label">Gap Register</p>
+  <div class="card">
+    <div class="register-empty" id="registerEmpty">Press Solve to compute the gap register for the current situation values.</div>
+    <table class="gaps" id="registerTable" style="display:none;">
+      <thead><tr><th>Status</th><th>Norm</th><th>Duty holder</th><th>Finding</th></tr></thead>
+      <tbody id="registerBody"></tbody>
+    </table>
+  </div>
+</section>
+
+<footer>Interactive re&#8209;implementation of the Nomos modular norm visual/reasoning pattern from robinagandhi/modularnorms, applied to a PHI&#8209;Nomos HIPAA gap&#8209;analysis case study. Reasoning runs entirely client&#8209;side in this file &mdash; no external norm server required.</footer>
+
+</div>
+<div class="tooltip" id="tooltip"><span class="tt-id" id="ttId"></span><span id="ttText"></span></div>
+<script>
+const META = {"tooltips": {"HIPAA308a1iiA": "45 CFR 164.308(a)(1)(ii)(A): A covered entity must conduct an accurate and thorough assessment of the potential risks and vulnerabilities to the confidentiality, integrity, and availability of electronic protected health information it holds.", "HIPAA308a1iiA_1": "covered entity conducted and documented a risk analysis covering the new cloud environment before ePHI was migrated into it", "HIPAA308a1iiA_2": "covered entity changes the IT infrastructure or environment that creates, receives, maintains, or transmits ePHI (e.g. migrates to a new cloud environment)", "HIPAA312a2iv": "45 CFR 164.312(a)(2)(iv): A covered entity must implement a mechanism to encrypt and decrypt electronic protected health information where reasonable and appropriate, consistent with the entity's risk analysis.", "HIPAA312a2iv_3": "ePHI stored in the new cloud environment was encrypted at rest for the full duration of the migration window", "HIPAA410b": "45 CFR 164.410 / 164.404: Following discovery of a breach of unsecured protected health information, a covered entity must notify each affected individual and HHS without unreasonable delay, and in no case later than 60 days after discovery.", "HIPAA410b_5": "covered entity notified affected individuals and HHS within 60 days of discovering the unencrypted PHI exposure"}, "situationLabels": {"HIPAA308a1iiA_1": "covered entity conducted and documented a risk analysis covering the new cloud environment before ePHI was migrated into it", "HIPAA308a1iiA_2": "covered entity changes the IT infrastructure or environment that creates, receives, maintains, or transmits ePHI (e.g. migrates to a new cloud environment)", "HIPAA312a2iv_3": "ePHI stored in the new cloud environment was encrypted at rest for the full duration of the migration window", "HIPAA312a2iv_4": "SS_HIPAA308a1iiA", "HIPAA410b_5": "covered entity notified affected individuals and HHS within 60 days of discovering the unencrypted PHI exposure", "HIPAA410b_6": "SS_HIPAA312a2iv"}, "nodeKind": {"HIPAA308a1iiA": "duty", "HIPAA308a1iiA_1": "situation", "HIPAA308a1iiA_2": "situation", "HIPAA312a2iv": "duty", "HIPAA312a2iv_3": "situation", "HIPAA312a2iv_4": "crossref", "HIPAA410b": "duty", "HIPAA410b_5": "situation", "HIPAA410b_6": "crossref"}, "normOrder": ["HIPAA308a1iiA", "HIPAA312a2iv", "HIPAA410b"], "norms": {"HIPAA308a1iiA": {"kind": "duty", "sentence": "45 CFR 164.308(a)(1)(ii)(A): A covered entity must conduct an accurate and thorough assessment of the potential risks and vulnerabilities to the confidentiality, integrity, and availability of electronic protected health information it holds.", "actor": "Covered entity", "satisfiesSid": "HIPAA308a1iiA_1", "activatesSid": "HIPAA308a1iiA_2", "activatesIsCrossref": false, "crossrefTarget": null}, "HIPAA312a2iv": {"kind": "duty", "sentence": "45 CFR 164.312(a)(2)(iv): A covered entity must implement a mechanism to encrypt and decrypt electronic protected health information where reasonable and appropriate, consistent with the entity's risk analysis.", "actor": "Covered entity", "satisfiesSid": "HIPAA312a2iv_3", "activatesSid": "HIPAA312a2iv_4", "activatesIsCrossref": true, "crossrefTarget": "HIPAA308a1iiA"}, "HIPAA410b": {"kind": "duty", "sentence": "45 CFR 164.410 / 164.404: Following discovery of a breach of unsecured protected health information, a covered entity must notify each affected individual and HHS without unreasonable delay, and in no case later than 60 days after discovery.", "actor": "Covered entity", "satisfiesSid": "HIPAA410b_5", "activatesSid": "HIPAA410b_6", "activatesIsCrossref": true, "crossrefTarget": "HIPAA312a2iv"}}};
+const FINDINGS = {"HIPAA308a1iiA": "No risk analysis was performed for the new cloud environment prior to migrating ePHI into it \u2014 a gap at \u00a7164.308(a)(1)(ii)(A).", "HIPAA312a2iv": "Because the environment-specific risk analysis was skipped, the resulting cloud storage bucket held ePHI unencrypted at rest during the migration window, contrary to \u00a7164.312(a)(2)(iv).", "HIPAA410b": "The unencrypted PHI exposure is a presumptively reportable event; the 60-day breach notification clock at \u00a7164.410 was not satisfied."};
+
+const state = {};
+Object.keys(META.situationLabels).forEach(sid => {
+  if (META.nodeKind[sid] === 'situation') state[sid] = null;
+});
+
+const COLORS = {
+  st:{fill:'#e3f3ea', stroke:'#1f8a5f'}, sf:{fill:'#fbe9e7', stroke:'#b3413a'}, su:{fill:'#ffffff', stroke:'#334155'},
+  com:{fill:'#e3f3ea', stroke:'#1f8a5f'}, vio:{fill:'#fbe9e7', stroke:'#b3413a'}, inc:{fill:'#eef0ee', stroke:'#9aa3ab'},
+  xref:{fill:'#fdeed9', stroke:'#c2751b'}
+};
+
+function shapeEl(nodeId){ const g = document.getElementById(nodeId); return g ? g.querySelector('polygon, path') : null; }
+function clusterShapeEl(normId){
+  const titles = document.querySelectorAll('#mainsvg g.cluster > title');
+  for (const t of titles){ if (t.textContent === 'clusterSS_' + normId) return t.parentElement.querySelector('path, polygon'); }
+  return null;
+}
+function paint(el, fill, stroke){ if (!el) return; el.setAttribute('fill', fill); el.setAttribute('stroke', stroke); }
+
+const tooltip = document.getElementById('tooltip');
+const ttId = document.getElementById('ttId');
+const ttText = document.getElementById('ttText');
+function attachTooltip(nodeId, label, sentence){
+  const g = document.getElementById(nodeId);
+  if (!g) return;
+  g.addEventListener('mousemove', (e) => {
+    ttId.textContent = label; ttText.textContent = sentence;
+    tooltip.style.left = (e.clientX + 16) + 'px'; tooltip.style.top = (e.clientY + 16) + 'px';
+    tooltip.classList.add('show');
+  });
+  g.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+}
+Object.entries(META.norms).forEach(([id, n]) => attachTooltip(id, id + ' \u2014 ' + n.kind.toUpperCase(), n.sentence));
+Object.entries(META.situationLabels).forEach(([sid, label]) => {
+  if (META.nodeKind[sid] === 'situation') attachTooltip(sid, sid, label);
+  else if (META.nodeKind[sid] === 'crossref') attachTooltip(sid, sid, 'Cross-reference: inherits its value from the ' + label + ' super-situation once solved.');
+});
+
+Object.keys(state).forEach(sid => {
+  const g = document.getElementById(sid);
+  if (!g) return;
+  g.classList.add('clickable');
+  g.addEventListener('click', () => {
+    if (state[sid] === null) state[sid] = true;
+    else if (state[sid] === true) state[sid] = false;
+    else state[sid] = null;
+    renderSituation(sid);
+    clearSolution();
+  });
+  renderSituation(sid);
+});
+
+function renderSituation(sid){
+  const v = state[sid];
+  const c = v === true ? COLORS.st : v === false ? COLORS.sf : COLORS.su;
+  paint(shapeEl(sid), c.fill, c.stroke);
+}
+
+function clearSolution(){
+  document.getElementById('registerEmpty').style.display = 'block';
+  document.getElementById('registerEmpty').textContent = 'Situation values changed \u2014 press Solve to recompute the gap register.';
+  document.getElementById('registerTable').style.display = 'none';
+  Object.keys(META.norms).forEach(id => paint(shapeEl(id), '#ffffff', 'black'));
+}
+
+function solve(){
+  const results = {};
+  META.normOrder.forEach(id => {
+    const n = META.norms[id];
+    const satisfied = state[n.satisfiesSid] === true;
+    let activated;
+    if (n.activatesIsCrossref){
+      const target = results[n.crossrefTarget];
+      activated = target ? target.status === 'vio' : false;
+    } else {
+      activated = state[n.activatesSid] === true;
+    }
+    const status = !activated ? 'inc' : (satisfied ? 'com' : 'vio');
+    results[id] = {activated, satisfied, status};
+  });
+  return results;
+}
+
+document.getElementById('solveBtn').addEventListener('click', () => {
+  const results = solve();
+  Object.entries(results).forEach(([id, r]) => {
+    const c = COLORS[r.status];
+    paint(shapeEl(id), c.fill, c.stroke);
+    paint(clusterShapeEl(id), r.status === 'inc' ? 'transparent' : c.fill, r.status === 'inc' ? '#94a3b8' : c.stroke);
+  });
+  renderRegister(results);
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  Object.keys(state).forEach(sid => { state[sid] = null; renderSituation(sid); });
+  clearSolution();
+});
+
+function renderRegister(results){
+  const rows = Object.entries(results);
+  const body = document.getElementById('registerBody');
+  body.innerHTML = '';
+  const violated = rows.filter(([,r]) => r.status === 'vio');
+  if (violated.length === 0){
+    document.getElementById('registerEmpty').style.display = 'block';
+    document.getElementById('registerEmpty').textContent = 'No violated duties under the current situation values. Toggle situations above to model the gap.';
+    document.getElementById('registerTable').style.display = 'none';
+    return;
+  }
+  document.getElementById('registerEmpty').style.display = 'none';
+  document.getElementById('registerTable').style.display = 'table';
+  rows.forEach(([id, r]) => {
+    const n = META.norms[id];
+    const pillClass = r.status === 'vio' ? 'pill-vio' : r.status === 'com' ? 'pill-com' : 'pill-inc';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="pill ${pillClass}">${r.status.toUpperCase()}</span></td>
+      <td><span class="norm-cite">${id}</span></td>
+      <td>${n.actor}</td>
+      <td>${r.status === 'vio' ? (FINDINGS[id]||'Duty violated.') : (r.status === 'com' ? 'Requirement satisfied under current situation values.' : 'Not yet activated under current situation values.')}</td>`;
+    body.appendChild(tr);
+  });
+}
+</script>
+</body>
+</html>

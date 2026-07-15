@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PHI-Nomos &mdash; HIPAA Gap Analysis Case Studies</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+:root{--paper:#f8f6f1;--panel:#ffffff;--hairline:#ddd7c8;--ink:#1c2129;--ink-soft:#565b52;--slate:#2c4a6e;--amber:#c2751b;
+--mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;--serif:'Source Serif 4',Georgia,serif;--sans:'Inter',-apple-system,sans-serif;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);line-height:1.55;}
+.wrap{max-width:900px;margin:0 auto;padding:56px 28px 80px;}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin:0 0 10px;}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(30px,4vw,44px);margin:0 0 14px;letter-spacing:-0.01em;}
+p.lede{font-family:var(--serif);font-style:italic;color:var(--ink-soft);font-size:18px;max-width:640px;margin:0 0 44px;}
+.cards{display:grid;gap:18px;}
+a.card{display:block;background:var(--panel);border:1px solid var(--hairline);border-radius:4px;padding:26px 28px;text-decoration:none;color:var(--ink);transition:border-color .15s ease, transform .1s ease;}
+a.card:hover{border-color:var(--slate);transform:translateX(2px);}
+a.card .num{font-family:var(--mono);font-size:12px;color:var(--slate);letter-spacing:.08em;}
+a.card h2{font-family:var(--serif);font-size:22px;margin:6px 0 8px;}
+a.card p{font-family:var(--sans);font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);margin-top:50px;padding-top:20px;border-top:1px solid var(--hairline);}
+.source-line a{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">PHI-Nomos &middot; Modular Norm Model Demos</p>
+  <h1>HIPAA PHI Gap Analysis &mdash; Case Studies</h1>
+  <p class="lede">Three interactive Nomos modular norm models, each tracing a HIPAA compliance gap from its regulatory text through cascading duties to a computed gap register.</p>
+  <div class="cards">
+    <a class="card" href="index.html">
+      <div class="num">Case Study 1</div>
+      <h2>Retroactive BAA Termination</h2>
+      <p>A lapsed Business Associate Agreement discovered during audit &mdash; &sect;164.308(b)(1) &rarr; &sect;164.410 &rarr; &sect;164.504(e)(2)(ii)(J).</p>
+    </a>
+    <a class="card" href="cloud-migration.html">
+      <div class="num">Case Study 2</div>
+      <h2>Cloud Migration PHI Gap</h2>
+      <p>A rushed EHR migration skips a risk analysis, leaving PHI unencrypted at rest &mdash; &sect;164.308(a)(1)(ii)(A) &rarr; &sect;164.312(a)(2)(iv) &rarr; &sect;164.410.</p>
+    </a>
+    <a class="card" href="workforce-deprovisioning.html">
+      <div class="num">Case Study 3</div>
+      <h2>Workforce Access De-provisioning Failure</h2>
+      <p>A terminated employee's EHR access isn't revoked for 45 days &mdash; &sect;164.308(a)(3)(ii)(C) &rarr; &sect;164.312(a)(1) &rarr; &sect;164.410.</p>
+    </a>
+  </div>
+  <p class="source-line">Model template: Mandal, Gandhi &amp; Siy, <a href="https://github.com/robinagandhi/modularnorms" target="_blank" rel="noopener">robinagandhi/modularnorms</a></p>
+</div>
+</body>
+</html>
